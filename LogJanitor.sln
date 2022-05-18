@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32505.173
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LogJanitor", "LogJanitor\LogJanitor.csproj", "{78DF661C-E989-46B0-8ECF-D0682A328907}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C2806FA6-1863-486B-A7FD-3AE48F3B265D}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		.gitignore = .gitignore
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{78DF661C-E989-46B0-8ECF-D0682A328907}.Debug|x64.ActiveCfg = Debug|x64
+		{78DF661C-E989-46B0-8ECF-D0682A328907}.Debug|x64.Build.0 = Debug|x64
+		{78DF661C-E989-46B0-8ECF-D0682A328907}.Release|x64.ActiveCfg = Release|x64
+		{78DF661C-E989-46B0-8ECF-D0682A328907}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {0B2077D1-E52B-42E2-846C-E1F072A3DA6F}
+	EndGlobalSection
+EndGlobal

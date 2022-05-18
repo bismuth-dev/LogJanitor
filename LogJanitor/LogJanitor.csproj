@@ -1,0 +1,104 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{78DF661C-E989-46B0-8ECF-D0682A328907}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>LogJanitor</RootNamespace>
+    <AssemblyName>LogJanitor</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <DocumentationFile>bin\x64\Debug\LogJanitor.xml</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="GreyMagic, Version=1.0.0.0, Culture=neutral, PublicKeyToken=260525fa2b0e778a, processorArchitecture=AMD64">
+      <HintPath>..\packages\RebornBuddy.Assemblies.1.0.492\lib\net461\GreyMagic.dll</HintPath>
+    </Reference>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="RebornBuddy, Version=1.0.492.0, Culture=neutral, PublicKeyToken=48d7174f8a943034, processorArchitecture=AMD64">
+      <HintPath>..\packages\RebornBuddy.Assemblies.1.0.492\lib\net461\RebornBuddy.exe</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="LogJanitorPlugin.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+    <AdditionalFiles Include="stylecop.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <Analyzer Include="..\packages\StyleCop.Analyzers.Unstable.1.2.0.435\analyzers\dotnet\cs\StyleCop.Analyzers.CodeFixes.dll" />
+    <Analyzer Include="..\packages\StyleCop.Analyzers.Unstable.1.2.0.435\analyzers\dotnet\cs\StyleCop.Analyzers.dll" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <!-- One of: BotBases, Plugins, Profiles, Quest Behaviors, Routines -->
+    <AddonType>Plugins</AddonType>
+    <!-- $(TargetName) auto-populated by Project Properties > Application > Assembly Name -->
+    <AddonName>$(TargetName)</AddonName>
+    <RebornDir>$(RebornbuddyDir)</RebornDir>
+    <RootDir>$(SolutionDir)</RootDir>
+    <IsInRebornDir>$(RootDir.StartsWith($(RebornDir), System.StringComparison.OrdinalIgnoreCase))</IsInRebornDir>
+  </PropertyGroup>
+  <Target Name="CopySolutionItems" AfterTargets="AfterBuild;AfterRebuild">
+    <!-- Copy selected solution items to project build output directory (e.g., README.md, LICENSE.md) -->
+    <!-- Special project items should instead use Properties > Copy to Output Directory: Copy Always -->
+    <!-- RebornBuddy requires at least one uncompiled C# file set to Copy Always (e.g., Loader.cs) -->
+    <CreateItem Include="$(SolutionDir)\*.md">
+      <Output TaskParameter="Include" ItemName="SolutionItems" />
+    </CreateItem>
+    <Message Importance="High" Text="Copying solution items to build output..." />
+    <Copy SourceFiles="@(SolutionItems)" DestinationFiles="@(SolutionItems->'$(OutDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
+  </Target>
+  <Target Name="DeployToRebornBuddy" AfterTargets="CopySolutionItems" Condition="'$(RebornDir)' != '' And !$(IsInRebornDir)">
+    <!-- For development convenience of pre-compiled addons, auto-copy build output to RebornBuddy if RebornbuddyDir env var set -->
+    <Error Condition="!Exists('$(RebornDir)')" Text="RebornbuddyDir set but directory doesn't exist! RebornbuddyDir='$(RebornDir)'" />
+    <CreateItem Include="$(TargetDir)\**\*" Exclude="$(TargetDir)\**\*.tmp">
+      <Output TaskParameter="Include" ItemName="BuildOutput" />
+    </CreateItem>
+    <Message Importance="High" Text="Copying build output to '$(RebornDir)\$(AddonType)\$(AddonName)'" />
+    <Copy SourceFiles="@(BuildOutput)" DestinationFiles="@(BuildOutput->'$(RebornDir)\$(AddonType)\$(AddonName)\%(RecursiveDir)%(Filename)%(Extension)')" />
+  </Target>
+  <Target Name="CleanIfInRebornBuddy" AfterTargets="CopySolutionItems" Condition="'$(RebornDir)' == '' Or $(IsInRebornDir)">
+    <!-- RebornBuddy does its own compilation and fails due to bin\obj folders, but manual VS builds are useful for finding compile-time errors -->
+    <!-- If solution is under RebornDir, clean build artifacts so RebornBuddy can do its own thing -->
+    <Message Importance="High" Text="Solution within RebornBuddy directory; cleaning build artifacts to avoid RB compile errors..." />
+    <CallTarget Targets="Clean" />
+  </Target>
+</Project>
