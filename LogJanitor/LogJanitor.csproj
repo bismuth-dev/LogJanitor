@@ -43,6 +43,8 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -56,7 +58,16 @@
     <Compile Include="LogJanitorPlugin.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Compile>
+    <Compile Include="LogManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RebornBuddyUiHelpers.cs" />
+    <Compile Include="LogJanitorSettings.cs" />
+    <Compile Include="SettingsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SettingsForm.Designer.cs">
+      <DependentUpon>SettingsForm.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -65,6 +76,11 @@
   <ItemGroup>
     <Analyzer Include="..\packages\StyleCop.Analyzers.Unstable.1.2.0.435\analyzers\dotnet\cs\StyleCop.Analyzers.CodeFixes.dll" />
     <Analyzer Include="..\packages\StyleCop.Analyzers.Unstable.1.2.0.435\analyzers\dotnet\cs\StyleCop.Analyzers.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="SettingsForm.resx">
+      <DependentUpon>SettingsForm.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

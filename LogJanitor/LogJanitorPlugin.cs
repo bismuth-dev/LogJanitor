@@ -1,10 +1,9 @@
 ﻿using ff14bot.AClasses;
 using ff14bot.Helpers;
+using ff14bot.Managers;
 using System;
 using System.Diagnostics;
-using System.Threading;
-using System.Windows;
-using System.Windows.Controls;
+using System.Linq;
 
 namespace LogJanitor
 {
@@ -13,6 +12,8 @@ namespace LogJanitor
     /// </summary>
     public class LogJanitorPlugin : BotPlugin
     {
+        private SettingsForm settingsForm;
+
         /// <inheritdoc/>
         public override string Author => "Manta";
 
@@ -23,7 +24,7 @@ namespace LogJanitor
         public override string Description => "Deletes old logs and adds shortcut to logs folder.";
 
         /// <inheritdoc/>
-        public override Version Version => new Version(0, 1);
+        public override Version Version => new Version(0, 1, 0);
 
         /// <summary>
         /// Gets a value indicating whether to enable the plugin's settings button.
@@ -40,7 +41,12 @@ namespace LogJanitor
         /// </summary>
         public override void OnButtonPress()
         {
-            base.OnButtonPress();
+            if (settingsForm == null)
+            {
+                settingsForm = new SettingsForm();
+            }
+
+            settingsForm.ShowDialog();
         }
 
         /// <summary>
@@ -48,7 +54,7 @@ namespace LogJanitor
         /// </summary>
         public override void OnInitialize()
         {
-            AddMainMenuButton("View Logs", (sender, e) => Process.Start("explorer.exe", $@"/select,""{Logging.LogFilePath}"""));
+            RebornBuddyUiHelpers.AddMainMenuButton("View Full Logs", (sender, e) => Process.Start("explorer.exe", $@"/select,""{Logging.LogFilePath}"""));
         }
 
         /// <summary>
@@ -57,6 +63,13 @@ namespace LogJanitor
         public override void OnShutdown()
         {
             base.OnShutdown();
+
+            PluginContainer ljPlugin = PluginManager.Plugins.FirstOrDefault(p => (BotPlugin)p.Plugin == this);
+
+            if (ljPlugin != null && ljPlugin.Enabled)
+            {
+                LogManager.DeleteOldLogs(LogJanitorSettings.Instance.MaxAgeDays);
+            }
         }
 
         /// <summary>
@@ -64,7 +77,7 @@ namespace LogJanitor
         /// </summary>
         public override void OnEnabled()
         {
-            base.OnEnabled();
+            LogManager.DeleteOldLogs(LogJanitorSettings.Instance.MaxAgeDays);
         }
 
         /// <summary>
@@ -81,47 +94,6 @@ namespace LogJanitor
         public override void OnPulse()
         {
             base.OnPulse();
-        }
-
-        /// <summary>
-        /// Appends a new button to RebornBuddy's main UI.
-        /// </summary>
-        /// <param name="label">Text displayed on new button.</param>
-        /// <param name="onClick">Function called when new button is clicked.</param>
-        private static void AddMainMenuButton(string label, RoutedEventHandler onClick)
-        {
-            if (!Application.Current.MainWindow.CheckAccess())
-            {
-                Logging.WriteDiagnostic($"Failed to add button \"{label}\": Current thread {Thread.CurrentThread.ManagedThreadId} \"{Thread.CurrentThread.Name}\" cannot access MainWindow dispatcher.");
-
-                return;
-            }
-
-            Application.Current.MainWindow.Dispatcher.Invoke(() =>
-            {
-                Window mainWindow = Application.Current.MainWindow;
-                ComboBox mainMenu = mainWindow.FindName("BotBox") as ComboBox;
-                Grid buttonGrid = mainMenu.Parent as Grid;
-
-                Button newButton = new Button
-                {
-                    HorizontalAlignment = HorizontalAlignment.Right,
-                    VerticalAlignment = VerticalAlignment.Top,
-                    Width = 129,
-                    Height = 18,
-                    Margin = new Thickness(0, 169, 10, 0),
-
-                    IsEnabled = true,
-                    Visibility = Visibility.Visible,
-
-                    Name = $"button{buttonGrid.Children.Count + 1}",
-                    Content = label,
-                };
-
-                newButton.Click += onClick;
-
-                buttonGrid.Children.Add(newButton);
-            });
         }
     }
 }
