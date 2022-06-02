@@ -2,7 +2,7 @@
 
 [![Build Status][build-badge]][build-status] [![Discord][discord-badge]][discord-invite] [![GitHub Sponsors][sponsor-badge]][sponsor-link]
 
-**Log Janitor** is a plugin for managing [RebornBuddy][rebornbuddy] logs. It automatically deletes log files older than a certain date and adds a "View Logs" button for quick log folder access.
+**Log Janitor** is a plugin for managing [RebornBuddy][rebornbuddy] logs. It automatically deletes log files older than a certain age and adds a "View Full Logs" button for quick log folder access.
 
 [github-repo]: https://github.com/bismuth-dev/LogJanitor "LogJanitor on GitHub"
 [build-badge]: https://img.shields.io/github/workflow/status/bismuth-dev/LogJanitor/Publish?style=plastic&logo=github&label=Publish&color=success
@@ -32,10 +32,8 @@ If your repoBuddy config is missing Log Janitor, you can add it via repoBuddy's 
 
 ## Usage
 
-To quickly open the `RebornBuddy/Logs/` folder, click the "View Logs" button on the right side of the main window. The current log file will be pre-selected for easy uploading. This button is available even when the plugin is disabled.
+To quickly open the `RebornBuddy/Logs/` folder, click the "View Full Logs" button on the right side of the main window. The current log file will be pre-selected for easy uploading. This button is available even when the plugin is disabled.
 
-![View Logs button](https://i.imgur.com/qrF1cOr.png)
+![View Logs button](https://i.imgur.com/qrF1cOr.png) ![Settings window](https://i.imgur.com/3aGpLXS.png)
 
 To automatically delete older logs, enable "Log Janitor" in the Plugins tab. Max file age can be controlled in the plugin settings menu. The default max age is 30 days, and no files are deleted until Log Janitor is enabled.
-
-TODO: Add screenshot of settings
